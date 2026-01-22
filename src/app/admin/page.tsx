@@ -13,7 +13,7 @@ import { Language, getLanguage, setLanguage, t } from "@/lib/translations";
 import LanguageToggle from "@/components/LanguageToggle";
 
 export default function AdminPage() {
-  const [language, setLang] = useState<Language>("en");
+  const [language, setLang] = useState<Language>("de");
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);

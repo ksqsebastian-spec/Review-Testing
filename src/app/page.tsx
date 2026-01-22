@@ -12,7 +12,7 @@ import LanguageToggle from "@/components/LanguageToggle";
 
 function ReviewGeneratorContent() {
   const searchParams = useSearchParams();
-  const [language, setLang] = useState<Language>("en");
+  const [language, setLang] = useState<Language>("de");
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [rating, setRating] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -206,7 +206,7 @@ function LoadingFallback() {
 }
 
 export default function Home() {
-  const [language, setLang] = useState<Language>("en");
+  const [language, setLang] = useState<Language>("de");
 
   useEffect(() => {
     setLang(getLanguage());

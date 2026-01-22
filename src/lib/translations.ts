@@ -163,16 +163,12 @@ export type TranslationKey = keyof typeof translations.en;
 const LANGUAGE_KEY = "review-generator-language";
 
 export function getLanguage(): Language {
-  if (typeof window === "undefined") return "en";
+  if (typeof window === "undefined") return "de";
 
   const stored = localStorage.getItem(LANGUAGE_KEY);
   if (stored === "en" || stored === "de") return stored;
 
-  // Auto-detect from browser
-  const browserLang = navigator.language.toLowerCase();
-  if (browserLang.startsWith("de")) return "de";
-
-  return "en";
+  return "de";
 }
 
 export function setLanguage(lang: Language): void {
