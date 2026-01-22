@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 249, 250, 251;
+  --background-end-rgb: 243, 244, 246;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+}
+
+/* Custom star rating styles */
+.star {
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+}
+
+.star:hover {
+  transform: scale(1.1);
+}
+
+/* Tag button styles */
+.tag-button {
+  @apply px-4 py-2 rounded-full border-2 transition-all duration-200;
+}
+
+.tag-button:not(.selected) {
+  @apply border-gray-300 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50;
+}
+
+.tag-button.selected {
+  @apply border-blue-500 bg-blue-500 text-white;
+}
+
+/* Copy button animation */
+@keyframes copySuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.copy-success {
+  animation: copySuccess 0.3s ease-in-out;
+}
+
+/* Fade in animation for step transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
