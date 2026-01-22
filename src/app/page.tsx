@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Business, getBusinessById, getGoogleReviewUrl } from "@/lib/businesses";
+import { Business, getBusinessById, getGoogleReviewUrl, constructionTags } from "@/lib/businesses";
 import BusinessSelector from "@/components/BusinessSelector";
 import StarRating from "@/components/StarRating";
 import TagSelector from "@/components/TagSelector";
@@ -66,6 +66,7 @@ function ReviewGeneratorContent() {
   };
 
   const canGenerate = selectedBusiness && rating > 0;
+  const hasValidLink = selectedBusiness?.googleReviewLink;
 
   return (
     <>
@@ -114,7 +115,7 @@ function ReviewGeneratorContent() {
               </h2>
             </div>
             <TagSelector
-              availableTags={selectedBusiness.tags}
+              availableTags={constructionTags}
               selectedTags={selectedTags}
               onTagToggle={handleTagToggle}
             />
@@ -149,17 +150,23 @@ function ReviewGeneratorContent() {
             </div>
             <ReviewOutput
               review={generatedReview}
-              googleReviewUrl={getGoogleReviewUrl(selectedBusiness.placeId)}
+              googleReviewUrl={getGoogleReviewUrl(selectedBusiness.googleReviewLink)}
               onRegenerate={generateReview}
               isLoading={isLoading}
+              hasValidLink={!!hasValidLink}
             />
           </div>
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="mt-12 text-center text-sm text-gray-400">
-        <p>Scan the QR code or share the link to get reviews</p>
+      {/* Footer with Admin Link */}
+      <footer className="mt-12 text-center">
+        <a
+          href="/admin"
+          className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          Admin Panel
+        </a>
       </footer>
     </>
   );
