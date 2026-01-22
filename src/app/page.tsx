@@ -2,19 +2,37 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Business, getBusinessById, getGoogleReviewUrl, constructionTags } from "@/lib/businesses";
+import { Business, getBusinessById, getGoogleReviewUrl } from "@/lib/businesses";
+import { Language, getLanguage, setLanguage, t, getConstructionTags } from "@/lib/translations";
 import BusinessSelector from "@/components/BusinessSelector";
 import StarRating from "@/components/StarRating";
 import TagSelector from "@/components/TagSelector";
 import ReviewOutput from "@/components/ReviewOutput";
+import LanguageToggle from "@/components/LanguageToggle";
 
 function ReviewGeneratorContent() {
   const searchParams = useSearchParams();
+  const [language, setLang] = useState<Language>("en");
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [rating, setRating] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [generatedReview, setGeneratedReview] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const tr = t(language);
+
+  // Load language on mount
+  useEffect(() => {
+    setLang(getLanguage());
+  }, []);
+
+  const handleLanguageChange = (lang: Language) => {
+    setLang(lang);
+    setLanguage(lang);
+    // Reset selected tags when language changes (tags are translated)
+    setSelectedTags([]);
+    setGeneratedReview("");
+  };
 
   // Check for pre-selected business from URL
   useEffect(() => {
@@ -53,6 +71,7 @@ function ReviewGeneratorContent() {
           category: selectedBusiness.category,
           rating,
           selectedTags,
+          language, // Pass language to API
         }),
       });
 
@@ -70,6 +89,9 @@ function ReviewGeneratorContent() {
 
   return (
     <>
+      {/* Language Toggle */}
+      <LanguageToggle language={language} onLanguageChange={handleLanguageChange} />
+
       {/* Steps */}
       <div className="space-y-8">
         {/* Step 1: Select Business */}
@@ -79,12 +101,13 @@ function ReviewGeneratorContent() {
               1
             </span>
             <h2 className="text-lg font-semibold text-gray-800">
-              Choose Business
+              {tr.step1}
             </h2>
           </div>
           <BusinessSelector
             selectedBusiness={selectedBusiness}
             onSelect={setSelectedBusiness}
+            language={language}
           />
         </div>
 
@@ -96,10 +119,10 @@ function ReviewGeneratorContent() {
                 2
               </span>
               <h2 className="text-lg font-semibold text-gray-800">
-                Rate Your Experience
+                {tr.step2}
               </h2>
             </div>
-            <StarRating rating={rating} onRatingChange={setRating} />
+            <StarRating rating={rating} onRatingChange={setRating} language={language} />
           </div>
         )}
 
@@ -111,13 +134,14 @@ function ReviewGeneratorContent() {
                 3
               </span>
               <h2 className="text-lg font-semibold text-gray-800">
-                What Made It Great?
+                {tr.step3}
               </h2>
             </div>
             <TagSelector
-              availableTags={constructionTags}
+              availableTags={getConstructionTags(language)}
               selectedTags={selectedTags}
               onTagToggle={handleTagToggle}
+              language={language}
             />
           </div>
         )}
@@ -133,7 +157,7 @@ function ReviewGeneratorContent() {
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
-            Generate My Review
+            {tr.generateReview}
           </button>
         )}
 
@@ -145,7 +169,7 @@ function ReviewGeneratorContent() {
                 4
               </span>
               <h2 className="text-lg font-semibold text-gray-800">
-                Your Review
+                {tr.step4}
               </h2>
             </div>
             <ReviewOutput
@@ -154,6 +178,7 @@ function ReviewGeneratorContent() {
               onRegenerate={generateReview}
               isLoading={isLoading}
               hasValidLink={!!hasValidLink}
+              language={language}
             />
           </div>
         )}
@@ -165,7 +190,7 @@ function ReviewGeneratorContent() {
           href="/admin"
           className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
         >
-          Admin Panel
+          {tr.adminPanel}
         </a>
       </footer>
     </>
@@ -181,16 +206,24 @@ function LoadingFallback() {
 }
 
 export default function Home() {
+  const [language, setLang] = useState<Language>("en");
+
+  useEffect(() => {
+    setLang(getLanguage());
+  }, []);
+
+  const tr = t(language);
+
   return (
     <main className="min-h-screen py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Quick Review Generator
+            {tr.title}
           </h1>
           <p className="text-gray-600">
-            Generate and submit your Google review in seconds
+            {tr.subtitle}
           </p>
         </div>
 

@@ -9,8 +9,11 @@ import {
   removeBusiness,
   saveBusinesses,
 } from "@/lib/businesses";
+import { Language, getLanguage, setLanguage, t } from "@/lib/translations";
+import LanguageToggle from "@/components/LanguageToggle";
 
 export default function AdminPage() {
+  const [language, setLang] = useState<Language>("en");
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -19,10 +22,18 @@ export default function AdminPage() {
   const [formName, setFormName] = useState("");
   const [formLink, setFormLink] = useState("");
 
-  // Load businesses on mount
+  const tr = t(language);
+
+  // Load language and businesses on mount
   useEffect(() => {
+    setLang(getLanguage());
     setBusinesses(getBusinesses());
   }, []);
+
+  const handleLanguageChange = (lang: Language) => {
+    setLang(lang);
+    setLanguage(lang);
+  };
 
   const refreshBusinesses = () => {
     setBusinesses(getBusinesses());
@@ -71,14 +82,14 @@ export default function AdminPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to remove this business?")) {
+    if (confirm(tr.confirmDelete)) {
       removeBusiness(id);
       refreshBusinesses();
     }
   };
 
   const handleClearAll = () => {
-    if (confirm("Are you sure you want to remove ALL businesses? This cannot be undone.")) {
+    if (confirm(tr.confirmClearAll)) {
       saveBusinesses([]);
       refreshBusinesses();
     }
@@ -88,14 +99,17 @@ export default function AdminPage() {
     <main className="min-h-screen py-8 px-4 bg-gray-50">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Admin Panel
+            {tr.adminTitle}
           </h1>
           <p className="text-gray-600">
-            Manage your businesses for quick reviews
+            {tr.adminSubtitle}
           </p>
         </div>
+
+        {/* Language Toggle */}
+        <LanguageToggle language={language} onLanguageChange={handleLanguageChange} />
 
         {/* Add Business Button */}
         {!showAddForm && !editingId && (
@@ -106,18 +120,18 @@ export default function AdminPage() {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            Add New Business
+            {tr.addNewBusiness}
           </button>
         )}
 
         {/* Add Form */}
         {showAddForm && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6 animate-fadeIn">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Add New Business</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">{tr.addNewBusiness}</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Business Name *
+                  {tr.businessName} *
                 </label>
                 <input
                   type="text"
@@ -129,17 +143,17 @@ export default function AdminPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Google Review Link
+                  {tr.googleReviewLink}
                 </label>
                 <input
                   type="text"
                   value={formLink}
                   onChange={(e) => setFormLink(e.target.value)}
-                  placeholder="Paste Google review URL here"
+                  placeholder="https://..."
                   className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
                 />
                 <p className="text-xs text-gray-400 mt-1">
-                  Find this by searching your business on Google → Click "Write a review" → Copy the URL
+                  {tr.googleLinkHint}
                 </p>
               </div>
               <div className="flex gap-3">
@@ -148,13 +162,13 @@ export default function AdminPage() {
                   disabled={!formName.trim()}
                   className="flex-1 py-3 px-6 rounded-xl font-semibold bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 >
-                  Add Business
+                  {tr.addBusiness}
                 </button>
                 <button
                   onClick={handleCancelEdit}
                   className="py-3 px-6 rounded-xl font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                 >
-                  Cancel
+                  {tr.cancel}
                 </button>
               </div>
             </div>
@@ -173,7 +187,7 @@ export default function AdminPage() {
                 <div className="space-y-4 animate-fadeIn">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Business Name *
+                      {tr.businessName} *
                     </label>
                     <input
                       type="text"
@@ -184,13 +198,13 @@ export default function AdminPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Google Review Link
+                      {tr.googleReviewLink}
                     </label>
                     <input
                       type="text"
                       value={formLink}
                       onChange={(e) => setFormLink(e.target.value)}
-                      placeholder="Paste Google review URL here"
+                      placeholder="https://..."
                       className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
                     />
                   </div>
@@ -200,13 +214,13 @@ export default function AdminPage() {
                       disabled={!formName.trim()}
                       className="flex-1 py-3 px-6 rounded-xl font-semibold bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300 transition-colors"
                     >
-                      Save Changes
+                      {tr.saveChanges}
                     </button>
                     <button
                       onClick={handleCancelEdit}
                       className="py-3 px-6 rounded-xl font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                     >
-                      Cancel
+                      {tr.cancel}
                     </button>
                   </div>
                 </div>
@@ -222,14 +236,14 @@ export default function AdminPage() {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        Google link configured
+                        {tr.linkConfigured}
                       </p>
                     ) : (
                       <p className="text-sm text-orange-500 flex items-center gap-1 mt-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
-                        No Google link yet
+                        {tr.noLinkYet}
                       </p>
                     )}
                   </div>
@@ -265,8 +279,8 @@ export default function AdminPage() {
             <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
-            <p>No businesses added yet</p>
-            <p className="text-sm mt-1">Click "Add New Business" to get started</p>
+            <p>{tr.noBusinessesYet}</p>
+            <p className="text-sm mt-1">{tr.clickToStart}</p>
           </div>
         )}
 
@@ -277,7 +291,7 @@ export default function AdminPage() {
               onClick={handleClearAll}
               className="text-sm text-red-500 hover:text-red-600 transition-colors"
             >
-              Clear all businesses
+              {tr.clearAll}
             </button>
           </div>
         )}
@@ -288,7 +302,7 @@ export default function AdminPage() {
             href="/"
             className="text-blue-500 hover:text-blue-600 font-medium"
           >
-            ← Back to Review Generator
+            {tr.backToGenerator}
           </a>
         </div>
       </div>

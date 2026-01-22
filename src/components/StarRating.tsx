@@ -1,20 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import { Language, t } from "@/lib/translations";
 
 interface StarRatingProps {
   rating: number;
   onRatingChange: (rating: number) => void;
+  language: Language;
 }
 
-export default function StarRating({ rating, onRatingChange }: StarRatingProps) {
+export default function StarRating({ rating, onRatingChange, language }: StarRatingProps) {
   const [hoverRating, setHoverRating] = useState(0);
+  const tr = t(language);
+
+  const getRatingText = (r: number) => {
+    switch (r) {
+      case 1: return tr.poor;
+      case 2: return tr.fair;
+      case 3: return tr.good;
+      case 4: return tr.veryGood;
+      case 5: return tr.excellent;
+      default: return tr.clickToRate;
+    }
+  };
 
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-3">
-        Your Rating
-      </label>
       <div className="flex gap-2 justify-center">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
@@ -38,12 +49,7 @@ export default function StarRating({ rating, onRatingChange }: StarRatingProps) 
         ))}
       </div>
       <div className="text-center mt-2 text-sm text-gray-500">
-        {rating === 0 && "Click to rate"}
-        {rating === 1 && "Poor"}
-        {rating === 2 && "Fair"}
-        {rating === 3 && "Good"}
-        {rating === 4 && "Very Good"}
-        {rating === 5 && "Excellent"}
+        {getRatingText(rating)}
       </div>
     </div>
   );

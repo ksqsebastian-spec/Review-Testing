@@ -2,17 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { Business, getBusinesses } from "@/lib/businesses";
+import { Language, t } from "@/lib/translations";
 
 interface BusinessSelectorProps {
   selectedBusiness: Business | null;
   onSelect: (business: Business) => void;
+  language: Language;
 }
 
 export default function BusinessSelector({
   selectedBusiness,
   onSelect,
+  language,
 }: BusinessSelectorProps) {
   const [businesses, setBusinesses] = useState<Business[]>([]);
+  const tr = t(language);
 
   useEffect(() => {
     setBusinesses(getBusinesses());
@@ -21,9 +25,9 @@ export default function BusinessSelector({
   if (businesses.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        <p>No businesses configured yet.</p>
+        <p>{tr.noBusinesses}</p>
         <a href="/admin" className="text-blue-500 hover:text-blue-600 text-sm mt-2 inline-block">
-          Go to Admin Panel to add businesses
+          {tr.goToAdmin}
         </a>
       </div>
     );
@@ -44,7 +48,7 @@ export default function BusinessSelector({
           >
             <div className="font-semibold text-gray-900">{business.name}</div>
             {!business.googleReviewLink && (
-              <div className="text-xs text-orange-500 mt-1">No review link</div>
+              <div className="text-xs text-orange-500 mt-1">{tr.noReviewLink}</div>
             )}
           </button>
         ))}
